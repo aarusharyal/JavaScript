@@ -98,6 +98,7 @@ function askGuess() {
             else
             {
                 console.log('Thanks for playing!');
+                //Added thank you message.
                 rl.close();
             }
         });
