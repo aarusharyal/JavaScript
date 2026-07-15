@@ -5,6 +5,7 @@ This folder contains small JavaScript game projects used for learning and practi
 ## Projects
 
 - **guessTheNumberGame**: A higher-or-lower number guessing game. See higherOrLowerGame.js.
+- **hangman**: A game for a hangman game. See app.js in hangman.
 - **headsOrTails**: A simple coin flip simulator. See app.js in headsOrTails.
 - **rockPaperScissor**: Rock-Paper-Scissors game. See app.js in rockPaperScissor.
 
