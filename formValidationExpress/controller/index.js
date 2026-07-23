@@ -7,12 +7,12 @@ app.use(express.static("./view/CSS"));
 app.use(express.static("./view/JS"));
 
 app.get("/", (req, res) => {
-  const absoluteValue = path.resolve("./view/Html/login.html");
+  const absoluteValue = path.join(__dirname, "view/Html/login.html");
   res.sendFile(absoluteValue);
   console.log("Dashboard Loaded Succesfully");
 });
 app.get("/register", (req, res) => {
-  const absoluteValue = path.resolve("./view/Html/register.html");
+  const absoluteValue = path.join(__dirname, "view/Html/register.html");
   res.sendFile(absoluteValue);
   console.log("Register Page loaded succesfully");
 });
