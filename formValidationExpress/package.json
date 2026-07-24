@@ -1,7 +1,7 @@
 {
-  "name": "loginreg",
+  "name": "formValidationExpress",
   "version": "1.0.0",
-  "description": "",
+  "description": "A simple Express.js project demonstrating server-side form validation using modern JavaScript (ES modules).",
   "license": "ISC",
   "author": "Aarush Aryal",
   "type": "module",

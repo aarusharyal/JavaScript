@@ -22,6 +22,9 @@ app.get("/register", (req, res) => {
   console.log("Register Page loaded succesfully");
 });
 
+app.get("/login", (req, res) => {
+  res.sendFile(path.resolve("./view/Html/login.html"));
+});
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   const absoluteValue = path.resolve("view/Html/login.html");
