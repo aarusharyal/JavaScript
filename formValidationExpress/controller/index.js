@@ -22,6 +22,33 @@ app.get("/register", (req, res) => {
   console.log("Register Page loaded succesfully");
 });
 
+app.post("/register", (req, res) => {
+  const { fullname, email, username, password } = req.body;
+  const dataPath = path.resolve("./model/data.json");
+
+  let users = [];
+  if (fs.existsSync(dataPath)) {
+    const rawData = fs.readFileSync(dataPath, "utf-8").trim();
+    if (rawData) {
+      try {
+        users = JSON.parse(rawData);
+      } catch (error) {
+        users = [];
+      }
+    }
+  }
+
+  const existingUser = users.find((user) => user.email.toLowerCase() === email.toLowerCase());
+  if (existingUser) {
+    return res.redirect("/register?error=EmailAlreadyExists");
+  }
+
+  users.push({ fullname, email, username, password });
+  fs.writeFileSync(dataPath, JSON.stringify(users, null, 2));
+
+  res.redirect("/login?registered=true");
+});
+
 app.get("/login", (req, res) => {
   res.sendFile(path.resolve("./view/Html/login.html"));
 });

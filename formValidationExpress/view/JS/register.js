@@ -1,22 +1,36 @@
-const form = document.querySelector("form");
+const form = document.getElementById("formRegistration");
+const serverError = document.getElementById("serverError");
 const fullName = document.getElementById("fullname");
 const email = document.getElementById("email");
 const username = document.getElementById("username");
 const password = document.getElementById("password");
 const confirmPassword = document.getElementById("confirm-password");
-const termsCheckbox = form.querySelector("input[type=checkbox]");
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
-const passwordStrengthRegex =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
+const passwordStrengthRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
+
+function showServerError() {
+  const params = new URLSearchParams(window.location.search);
+  const error = params.get("error");
+
+  if (error === "EmailAlreadyExists") {
+    serverError.textContent = "An account with that email already exists.";
+  } else {
+    serverError.textContent = "";
+  }
+}
+
+showServerError();
 
 fullName.addEventListener("input", () => {
   fullName.setCustomValidity("");
+  serverError.textContent = "";
 });
 
 email.addEventListener("input", () => {
   email.setCustomValidity("");
+  serverError.textContent = "";
 });
 
 username.addEventListener("input", () => {
@@ -30,10 +44,6 @@ password.addEventListener("input", () => {
 
 confirmPassword.addEventListener("input", () => {
   confirmPassword.setCustomValidity("");
-});
-
-termsCheckbox.addEventListener("change", () => {
-  termsCheckbox.setCustomValidity("");
 });
 
 form.addEventListener("submit", function (event) {
@@ -52,9 +62,7 @@ function validateRegistrationForm() {
   const confirmPasswordValue = confirmPassword.value.trim();
 
   if (fullNameValue === "" || fullNameValue.length < 3) {
-    fullName.setCustomValidity(
-      "Please enter your full name (at least 3 characters)",
-    );
+    fullName.setCustomValidity("Please enter your full name (at least 3 characters)");
   } else {
     fullName.setCustomValidity("");
   }
@@ -66,17 +74,13 @@ function validateRegistrationForm() {
   }
 
   if (usernameValue === "" || !usernameRegex.test(usernameValue)) {
-    username.setCustomValidity(
-      "Username should be 3-20 characters and may only contain letters, numbers, and underscores",
-    );
+    username.setCustomValidity("Username should be 3-20 characters and may only contain letters, numbers, and underscores");
   } else {
     username.setCustomValidity("");
   }
 
   if (passwordValue === "" || !passwordStrengthRegex.test(passwordValue)) {
-    password.setCustomValidity(
-      "Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character",
-    );
+    password.setCustomValidity("Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character");
   } else {
     password.setCustomValidity("");
   }
@@ -85,12 +89,6 @@ function validateRegistrationForm() {
     confirmPassword.setCustomValidity("Passwords must match");
   } else {
     confirmPassword.setCustomValidity("");
-  }
-
-  if (!termsCheckbox.checked) {
-    termsCheckbox.setCustomValidity("You must agree to the Terms & Conditions");
-  } else {
-    termsCheckbox.setCustomValidity("");
   }
 
   return form.reportValidity();
