@@ -4,6 +4,14 @@ const password = document.getElementById("password");
 
 console.log("Login.js Loaded");
 
+email.addEventListener("input", () => {
+  email.setCustomValidity("");
+});
+
+password.addEventListener("input", () => {
+  password.setCustomValidity("");
+});
+
 form.addEventListener("submit", function (e) {
   e.preventDefault();
   if (validateForm()) {
@@ -23,10 +31,10 @@ function validateForm() {
   }
 
   if (passwordValue === "" || passwordValue.length <= 7) {
-    // showError(password, "Password must be at least 8 characters long");
     password.setCustomValidity("Password must be at least 8 characters long");
   } else {
     password.setCustomValidity("");
   }
+
   return form.reportValidity();
 }
