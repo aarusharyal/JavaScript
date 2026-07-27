@@ -4,6 +4,12 @@ const password = document.getElementById("password");
 
 console.log("Login.js Loaded");
 
+// Check for error query parameter and display it
+const params = new URLSearchParams(window.location.search);
+if (params.get('error') === 'InvalidCredentials') {
+  alert('Invalid email or password. Please try again.');
+}
+
 email.addEventListener("input", () => {
   email.setCustomValidity("");
 });

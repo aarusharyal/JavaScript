@@ -8,7 +8,8 @@ const confirmPassword = document.getElementById("confirm-password");
 
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
-const passwordStrengthRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
+const passwordStrengthRegex =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
 
 function showServerError() {
   const params = new URLSearchParams(window.location.search);
@@ -62,7 +63,9 @@ function validateRegistrationForm() {
   const confirmPasswordValue = confirmPassword.value.trim();
 
   if (fullNameValue === "" || fullNameValue.length < 3) {
-    fullName.setCustomValidity("Please enter your full name (at least 3 characters)");
+    fullName.setCustomValidity(
+      "Please enter your full name (at least 3 characters)",
+    );
   } else {
     fullName.setCustomValidity("");
   }
@@ -74,13 +77,17 @@ function validateRegistrationForm() {
   }
 
   if (usernameValue === "" || !usernameRegex.test(usernameValue)) {
-    username.setCustomValidity("Username should be 3-20 characters and may only contain letters, numbers, and underscores");
+    username.setCustomValidity(
+      "Username should be 3-20 characters and may only contain letters, numbers, and underscores",
+    );
   } else {
     username.setCustomValidity("");
   }
 
   if (passwordValue === "" || !passwordStrengthRegex.test(passwordValue)) {
-    password.setCustomValidity("Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character");
+    password.setCustomValidity(
+      "Password must be at least 8 characters and include uppercase, lowercase, a number, and a special character",
+    );
   } else {
     password.setCustomValidity("");
   }

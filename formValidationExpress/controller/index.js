@@ -38,7 +38,9 @@ app.post("/register", (req, res) => {
     }
   }
 
-  const existingUser = users.find((user) => user.email.toLowerCase() === email.toLowerCase());
+  const existingUser = users.find(
+    (user) => user.email.toLowerCase() === email.toLowerCase(),
+  );
   if (existingUser) {
     return res.redirect("/register?error=EmailAlreadyExists");
   }
@@ -54,13 +56,39 @@ app.get("/login", (req, res) => {
 });
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
-  const absoluteValue = path.resolve("view/Html/login.html");
-  res.sendFile(absoluteValue);
-  console.log("Login Page loaded succesfully");
+  const dataPath = path.resolve("./model/data.json");
+
+  let users = [];
+  if (fs.existsSync(dataPath)) {
+     const rawData = fs.readFileSync(dataPath, "utf-8").trim();
+     if (rawData) {
+        try {
+           users = JSON.parse(rawData);
+        } catch (error) {
+           users = [];
+        }
+     }
+  }
+
+  const user = users.find(
+     (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+  );
+
+  if (user) {
+     return res.redirect("/dashboard");
+  } else {
+     return res.redirect("/login?error=InvalidCredentials");
+  }
 });
 
 app.post("/dashboard", (req, res) => {
   const { email, password } = req.body;
+  const absoluteValue = path.resolve("./view/Html/dashboard.html");
+  res.sendFile(absoluteValue);
+  console.log("Dashboard Page loaded succesfully");
+});
+
+app.get("/dashboard", (req, res) => {
   const absoluteValue = path.resolve("./view/Html/dashboard.html");
   res.sendFile(absoluteValue);
   console.log("Dashboard Page loaded succesfully");
