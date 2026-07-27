@@ -75,7 +75,7 @@ app.post("/login", (req, res) => {
   );
 
   if (user) {
-     return res.redirect("/dashboard");
+     return res.redirect(`/dashboard?username=${encodeURIComponent(user.username)}`);
   } else {
      return res.redirect("/login?error=InvalidCredentials");
   }
