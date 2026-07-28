@@ -1,6 +1,7 @@
 import express from "express";
 import path from "path";
 import fs from "fs";
+import session from "express-session";
 
 const app = express();
 
@@ -9,6 +10,37 @@ app.use(express.static("./view/JS"));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || "myapp-secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: false,
+    },
+  }),
+);
+
+const readUsers = () => {
+  const dataPath = path.resolve("./model/data.json");
+  if (!fs.existsSync(dataPath)) return [];
+
+  const rawData = fs.readFileSync(dataPath, "utf-8").trim();
+  if (!rawData) return [];
+
+  try {
+    return JSON.parse(rawData);
+  } catch (error) {
+    return [];
+  }
+};
+
+const writeUsers = (users) => {
+  const dataPath = path.resolve("./model/data.json");
+  fs.writeFileSync(dataPath, JSON.stringify(users, null, 2));
+};
 
 app.get("/", (req, res) => {
   const absoluteValue = path.resolve("./view/Html/login.html");
@@ -24,19 +56,7 @@ app.get("/register", (req, res) => {
 
 app.post("/register", (req, res) => {
   const { fullname, email, username, password } = req.body;
-  const dataPath = path.resolve("./model/data.json");
-
-  let users = [];
-  if (fs.existsSync(dataPath)) {
-    const rawData = fs.readFileSync(dataPath, "utf-8").trim();
-    if (rawData) {
-      try {
-        users = JSON.parse(rawData);
-      } catch (error) {
-        users = [];
-      }
-    }
-  }
+  const users = readUsers();
 
   const existingUser = users.find(
     (user) => user.email.toLowerCase() === email.toLowerCase(),
@@ -46,7 +66,7 @@ app.post("/register", (req, res) => {
   }
 
   users.push({ fullname, email, username, password });
-  fs.writeFileSync(dataPath, JSON.stringify(users, null, 2));
+  writeUsers(users);
 
   res.redirect("/login?registered=true");
 });
@@ -54,21 +74,10 @@ app.post("/register", (req, res) => {
 app.get("/login", (req, res) => {
   res.sendFile(path.resolve("./view/Html/login.html"));
 });
+
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
-  const dataPath = path.resolve("./model/data.json");
-
-  let users = [];
-  if (fs.existsSync(dataPath)) {
-    const rawData = fs.readFileSync(dataPath, "utf-8").trim();
-    if (rawData) {
-      try {
-        users = JSON.parse(rawData);
-      } catch (error) {
-        users = [];
-      }
-    }
-  }
+  const users = readUsers();
 
   const user = users.find(
     (u) =>
@@ -76,20 +85,43 @@ app.post("/login", (req, res) => {
   );
 
   if (user) {
-    return res.redirect("/dashboard");
-  } else {
-    return res.redirect("/login?error=InvalidCredentials");
+    req.session.user = {
+      fullname: user.fullname,
+      email: user.email,
+      username: user.username,
+    };
+
+    return req.session.save(() => {
+      res.redirect("/dashboard");
+    });
   }
+
+  return res.redirect("/login?error=InvalidCredentials");
+});
+
+app.get("/session", (req, res) => {
+  if (req.session?.user?.username) {
+    return res.json({ username: req.session.user.username });
+  }
+
+  return res.status(401).json({ message: "Not authenticated" });
 });
 
 app.post("/dashboard", (req, res) => {
-  const { email, password } = req.body;
+  if (!req.session?.user) {
+    return res.redirect("/login");
+  }
+
   const absoluteValue = path.resolve("./view/Html/dashboard.html");
   res.sendFile(absoluteValue);
   console.log("Dashboard Page loaded succesfully");
 });
 
 app.get("/dashboard", (req, res) => {
+  if (!req.session?.user) {
+    return res.redirect("/login");
+  }
+
   const absoluteValue = path.resolve("./view/Html/dashboard.html");
   res.sendFile(absoluteValue);
   console.log("Dashboard Page loaded succesfully");
@@ -97,7 +129,7 @@ app.get("/dashboard", (req, res) => {
 
 app.get("/logout", (req, res) => {
   if (req.session) {
-    req.session.destroy((err) => {
+    req.session.destroy(() => {
       res.redirect("/login");
     });
   } else {
