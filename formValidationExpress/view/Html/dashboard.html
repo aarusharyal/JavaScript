@@ -45,16 +45,6 @@
                     <span id="usernameDisplay">👤 User</span>
                 </div>
 
-                <script>
-                    const params = new URLSearchParams(window.location.search);
-                    const username = params.get("username");
-                    const usernameDisplay = document.getElementById("usernameDisplay");
-
-                    if (usernameDisplay) {
-                        usernameDisplay.textContent = username ? `👤 ${username}` : "👤 User";
-                    }
-                </script>
-
             </header>
 
 

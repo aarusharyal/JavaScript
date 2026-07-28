@@ -60,24 +60,25 @@ app.post("/login", (req, res) => {
 
   let users = [];
   if (fs.existsSync(dataPath)) {
-     const rawData = fs.readFileSync(dataPath, "utf-8").trim();
-     if (rawData) {
-        try {
-           users = JSON.parse(rawData);
-        } catch (error) {
-           users = [];
-        }
-     }
+    const rawData = fs.readFileSync(dataPath, "utf-8").trim();
+    if (rawData) {
+      try {
+        users = JSON.parse(rawData);
+      } catch (error) {
+        users = [];
+      }
+    }
   }
 
   const user = users.find(
-     (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+    (u) =>
+      u.email.toLowerCase() === email.toLowerCase() && u.password === password,
   );
 
   if (user) {
-     return res.redirect(`/dashboard?username=${encodeURIComponent(user.username)}`);
+    return res.redirect("/dashboard");
   } else {
-     return res.redirect("/login?error=InvalidCredentials");
+    return res.redirect("/login?error=InvalidCredentials");
   }
 });
 
